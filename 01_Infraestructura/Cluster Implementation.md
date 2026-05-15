@@ -388,7 +388,8 @@ Server:
 [172.16.99.101] --- [Summary] --- [F2: Monitor]─
 
 ```
-## 5 Resumen de comandos (Procurar el ordensecuancial)
+
+## 5 Resumen de comandos (Procurar el orden secuencial)
 
 ```bash
 # 1. Editar YAML
