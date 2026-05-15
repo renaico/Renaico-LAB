@@ -321,7 +321,7 @@ cluster:
 
 #### El archivo anterior "controlplane.yaml" se genera de forma automatica cuando se ejecuta el comando (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force). La idea seria Utilizar el generado de forma automatica por talosctl, y editar los parametros de tiempo, red, direccion ip, tipo de disco e interface de red.
 
-## Guardar y validar
+## 3.4 Guardar y validar
 
 ```bash
 # Guardá el archivo (Ctrl+O, Enter, Ctrl+X)
@@ -330,7 +330,7 @@ talosctl validate --config controlplane.yaml --mode metal
 
 Debería decir: `controlplane.yaml is valid for metal mode` 
 
-## Luego aplicá la configuración al host01
+## 3.5 Luego aplicá la configuración al host01
 
 **Antes de ejecutar, asegurate de que el servidor ProLiant esté booteado con el USB y muestre la IP en pantalla.**
 
@@ -340,7 +340,7 @@ talosctl apply-config --insecure --nodes 172.16.99.101 --file controlplane.yaml
 
 **Mirá la pantalla del servidor:** debe mostrar que se está instalando en `/dev/vda' 
 
-## Después del reinicio (2-3 minutos)
+## 3.6 Después del reinicio (2-3 minutos)
 
 ```bash
 export TALOSCONFIG=$(pwd)/talosconfig
@@ -351,7 +351,7 @@ talosctl bootstrap
 talosctl dashboard
 ```
 
-#### Ejemplos de las salidas post Implementacion y aplicacion de bootstrap
+#### 3.6.1 Ejemplos de las salidas post Implementacion y aplicacion de bootstrap
 
 ``` shell
 /Proliant Cluster$ talosctl version
@@ -388,3 +388,4 @@ Server:
 [172.16.99.101] --- [Summary] --- [F2: Monitor]─
 
 ```
+
