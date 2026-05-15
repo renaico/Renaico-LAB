@@ -19,7 +19,7 @@ A continuacion se establece una tabla con cada detalle y recurso Disponible.
 ## Infraestructura Virtual
 
 <figure>
-  <img src="/Renaico_LAB/02_imagenes/Screenshot_20260514_142631.png" width="500" height="700" alt="Maquinas Virtuales del Cluster">
+  <img src="../02_imagenes/Screenshot_20260514_142631.png" width="500" height="700" alt="Maquinas Virtuales del Cluster">
   <figcaption>Máquinas Virtuales componentes del cluster</figcaption>
 </figure>
 
