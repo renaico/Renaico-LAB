@@ -127,6 +127,7 @@ talosctl get disks --insecure -n 172.16.99.101
 ### 4.3 Editar `controlplane.yaml`
 
 #### *Considerar revisar el tipo y nomenclatura de la tarjeta de red, la cual variara en funcion del hardware con el cual se cuente.*
+
 #### Editar SOLO lo necesario en `controlplane.yaml`
 
 **Abrir el archivo:**
@@ -166,7 +167,7 @@ machine:
 talosctl validate --config controlplane.yaml --mode metal
 ```
 
-Debería decir: `controlplane.yaml is valid for metal mode` 
+Debería decir: `controlplane.yaml is valid for metal mode`
 
 ## 4.5 Luego aplicá la configuración al host01
 
@@ -176,7 +177,7 @@ Debería decir: `controlplane.yaml is valid for metal mode`
 talosctl apply-config --insecure --nodes 172.16.99.101 --file controlplane.yaml
 ```
 
-**Mirá la pantalla del servidor:** debe mostrar que se está instalando en `/dev/vda' 
+**Mirá la pantalla del servidor:** debe mostrar que se está instalando en `/dev/vda'
 
 ## 4.6 Después del reinicio (2-3 minutos)
 
@@ -191,38 +192,38 @@ talosctl dashboard
 
 ### 4.6.1 Ejemplos de las salidas post Implementacion y aplicacion de bootstrap
 
-``` shell
+```shell
 /Proliant Cluster$ talosctl version
 Client:
         Tag:         v1.12.6
         SHA:         a1b8bd61
-        Built:       
+        Built:     
         Go version:  go1.25.8
         OS/Arch:     linux/amd64
 Server:
         NODE:        172.16.99.101
         Tag:         v1.12.7
         SHA:         91c63991
-        Built:       
+        Built:     
         Go version:  go1.25.9
         OS/Arch:     linux/amd64
         Enabled:     RBAC 
 
-┐ talos01 (v1.12.7): uptime 97h19m54s, 2x3.09GHz, 16 GiB RAM, PROCS 30, CPU 6.8%, RAM 5.1%                                                                                       
-                                                                                                                                                                                 
- UUID       3c3eb3b8-1c2a-4812-9928-2cf83973705d                   TYPE               controlplane             HOST         talos01                                              
- CLUSTER    proliant-cluster (8 machines)                          KUBERNETES         v1.35.2                  IP           172.16.99.101/24                                     
- SIDEROLINK n/a                                                    KUBELET            √ Healthy                GW           172.16.99.1, 172.16.99.1                             
- STAGE      √ Running                                              APISERVER          √ Healthy                CONNECTIVITY √ OK                                                 
- READY      √ True                                                 CONTROLLER-MANAGER √ Healthy                DNS          208.67.220.220, 208.67.222.222                       
- SECUREBOOT × False                                                SCHEDULER          √ Healthy                NTP          ntp.shoa.cl, 190.102.231.152                         
+┐ talos01 (v1.12.7): uptime 97h19m54s, 2x3.09GHz, 16 GiB RAM, PROCS 30, CPU 6.8%, RAM 5.1%                                                                                     
+                                                                                                                                                                               
+ UUID       3c3eb3b8-1c2a-4812-9928-2cf83973705d                   TYPE               controlplane             HOST         talos01                                            
+ CLUSTER    proliant-cluster (8 machines)                          KUBERNETES         v1.35.2                  IP           172.16.99.101/24                                   
+ SIDEROLINK n/a                                                    KUBELET            √ Healthy                GW           172.16.99.1, 172.16.99.1                           
+ STAGE      √ Running                                              APISERVER          √ Healthy                CONNECTIVITY √ OK                                               
+ READY      √ True                                                 CONTROLLER-MANAGER √ Healthy                DNS          208.67.220.220, 208.67.222.222                     
+ SECUREBOOT × False                                                SCHEDULER          √ Healthy                NTP          ntp.shoa.cl, 190.102.231.152                       
 ── Logs ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
- user: warning: [2026-05-11T19:36:09.658558031Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":            
- "registry.k8s.io/etcd@sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                                 
- user: warning: [2026-05-11T19:36:09.683219969Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":            
- "sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                                                      
- user: warning: [2026-05-15T19:24:16.538148709Z]: [talos] bootstrap request received                                                                                             
-                                                                                                                                                                                 
+ user: warning: [2026-05-11T19:36:09.658558031Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":          
+ "registry.k8s.io/etcd@sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                               
+ user: warning: [2026-05-11T19:36:09.683219969Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":          
+ "sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                                                    
+ user: warning: [2026-05-15T19:24:16.538148709Z]: [talos] bootstrap request received                                                                                           
+                                                                                                                                                                               
 [172.16.99.101] --- [Summary] --- [F2: Monitor]─
 
 ```
@@ -253,3 +254,11 @@ talosctl bootstrap
 
 # 7. Dashboard
 talosctl dashboard
+
+```
+#### 6 Maquina Virtual Talos01 (ControlPlane) Operativa. 
+
+<figure>
+  <img src="../02_imagenes/Talos-Master-ok.png" width="900" height="700" alt="Talos Net OK">
+  <figcaption>Talos01 Operativa Como ControlPlane del Cluster</figcaption>
+</figure>
