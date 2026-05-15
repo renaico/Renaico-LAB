@@ -19,7 +19,7 @@ A continuacion se establece una tabla con cada detalle y recurso Disponible.
 ## Infraestructura Virtual
 
 <figure>
-  <img src="/02_imagenes/Screenshot_20260514_142631.png" width="500" height="700" alt="Maquinas Virtuales del Cluster">
+  <img src="/Renaico_LAB/02_imagenes/Screenshot_20260514_142631.png" width="500" height="700" alt="Maquinas Virtuales del Cluster">
   <figcaption>Máquinas Virtuales componentes del cluster</figcaption>
 </figure>
 
@@ -39,28 +39,33 @@ A continuacion se establece una tabla con cada detalle y recurso Disponible.
 | TALOS08 | HOST08                 | 2  | ae3f5cbd-3e7c-485b-98a8-23dc406e94a9 | ejecutando | 4      | 44459,9    | 7500            | 7500             | si          | activar    |
 
 
-## Preparacion del ambiente
+### Preparacion del ambiente
 
-### Ejecutar como root
+#### Ejecutar como root, configuracion de usuario
 
+```bash
 #### instalar sudo
-
 apt-get -y install sudo
+```
 
+```bash
 #### Incluir al usuario en el grupo sudo
 usermod -aG sudo renaico
+```
 
-### cerrar todas las sesiones para que se apliquen los grupos
+#### cerrar todas las sesiones para que se apliquen los grupos
 
 #### Configuracion de red
 
+```bash
 #### copia de seguridad del archivo de configuracion /etc/network/interfaces
 
 cp  /etc/network/interfaces /etc/network/interfaces.bak
+```
 
 #### Configuracion de ip estatica, 
 
-editar: /etc/network/interfaces
+#### editar: /etc/network/interfaces
 
 agregar:  
 
@@ -75,17 +80,18 @@ iface eno1 inet static
     dns-nameservers 208.67.220.220
 
 ```
-### Ejecutar como usuario "sudo" 
+#### Ejecutar como usuario "sudo" 
 
-## Instalacion de binarios de kvm/libvirt
-
+```bash
+#### Instalacion de binarios de kvm/libvirt
 sudo apt update
 sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virtinst virt-manager
+```
 
-## agregar al usuario a los grupos kvm y libvirt 
-
+```bash
+#### agregar al usuario a los grupos kvm y libvirt 
 sudo adduser $(whoami) libvirt
 sudo adduser $(whoami) kvm 
-
-#### desde la maquina local eviar la clave de ssh, administrar desde virt manager
+```
+### Desde la maquina local eviar la clave de ssh, administrar desde virt manager
 
