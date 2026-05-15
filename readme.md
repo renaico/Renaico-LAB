@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-1.30-blue)](https://kubernetes.io)
 [![Talos](https://img.shields.io/badge/Talos-1.7-green)](https://www.talos.dev)
-[![Security Scan](https://github.com/yourusername/talos-k8s-devsecops/actions/workflows/security-scan.yml/badge.svg)](https://github.com/renaico/talos-k8s-devsecops/actions)
+[![Security Scan](https://cdn-icons-png.flaticon.com/512/12796/12796169.png)](https://github.com/renaico/talos-k8s-devsecops/actions)
 
 ## 📋 Descripción
 
