@@ -1,0 +1,9 @@
+Direccion IP,Hostname,Sistema Operativo,product,cpu_model,cpu_cores,mem_gib,disks_summary
+172.16.99.11,host01,Debian GNU/Linux 12 (bookworm),ProLiant ML310e Gen8,Intel(R) Xeon(R) CPU E3-1220 V2 @ 3.10GHz,4,"27,36","sda(465,8G);sdb(465,8G);sdc(465,8G)"
+172.16.99.12,host02,Debian GNU/Linux 11 (bullseye),ProLiant ML350 G6,Intel(R) Xeon(R) CPU           E5530  @ 2.40GHz,16,"27,44","sda(558,7G);sdb(931,5G)"
+172.16.99.13,host03,Debian GNU/Linux 11 (bullseye),ProLiant ML350 G6,Intel(R) Xeon(R) CPU           E5645  @ 2.40GHz,12,"23,46","sda(465,8G);sdb(465,8G)"
+172.16.99.14,host04,Debian GNU/Linux 13 (trixie),,Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz,8,"7,66","sda(3,6T);sdb(931,5G)"
+172.16.99.15,host05,Debian GNU/Linux 13 (trixie),,Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz,4,"7,73","sda(931,5G)"
+172.16.99.16,host06,Debian GNU/Linux 13 (trixie),,Intel(R) Core(TM) i3-3240 CPU @ 3.40GHz,4,"7,73","sda(465,8G);sr0(1024M)"
+172.16.99.17,host07,Debian GNU/Linux 13 (trixie),,Intel(R) Core(TM) i3-3240 CPU @ 3.40GHz,4,"7,60","sda(931,5G)"
+172.16.99.18,host08,Debian GNU/Linux 13 (trixie),,Intel(R) Core(TM) i3-2100 CPU @ 3.10GHz,4,"7,67","sda(465,8G)"

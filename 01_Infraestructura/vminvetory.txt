@@ -1,0 +1,160 @@
+=== Detalles de: TALOS01 ===
+Id:             10
+Nombre:         TALOS01
+UUID:           3c3eb3b8-1c2a-4812-9928-2cf83973705d
+Tipo de sistema operatuvo: hvm
+Estado:         ejecutando
+CPU(s):         2
+Hora de la CPU: 66851,1s
+Memoria máxima: 16896000 KiB
+Memoria utilizada: 16896000 KiB
+Persistente:    si
+Autoinicio:     activar
+Guardar administrado: no
+Modelo de seguridad: apparmor
+DOI de seguridad: 0
+Etiqueta de seguridad: libvirt-3c3eb3b8-1c2a-4812-9928-2cf83973705d (enforcing)
+
+=== Detalles de: TALOS02 ===
+Id:             1
+Nombre:         TALOS02
+UUID:           b9db62ee-cef5-4a84-95b6-fc6884683eeb
+Tipo de sistema operatuvo: hvm
+Estado:         ejecutando
+CPU(s):         8
+Hora de la CPU: 53428,3s
+Memoria máxima: 16384000 KiB
+Memoria utilizada: 16384000 KiB
+Persistente:    si
+Autoinicio:     desactivar
+Guardar administrado: no
+Modelo de seguridad: apparmor
+DOI de seguridad: 0
+Etiqueta de seguridad: libvirt-b9db62ee-cef5-4a84-95b6-fc6884683eeb (enforcing)
+
+=== Detalles de: TALOS03 ===
+Id:             1
+Nombre:         TALOS03
+UUID:           e03f83cd-ad92-4bc7-be08-234a3ee7d9ee
+Tipo de sistema operatuvo: hvm
+Estado:         ejecutando
+CPU(s):         8
+Hora de la CPU: 54710,2s
+Memoria máxima: 16384000 KiB
+Memoria utilizada: 16384000 KiB
+Persistente:    si
+Autoinicio:     desactivar
+Guardar administrado: no
+Modelo de seguridad: apparmor
+DOI de seguridad: 0
+Etiqueta de seguridad: libvirt-e03f83cd-ad92-4bc7-be08-234a3ee7d9ee (enforcing) 
+
+=== Detalles de: TALOS04 ===
+Id:             11
+Nombre:         TALOS04
+UUID:           52fb2045-086f-46df-b260-94adf40cbb27
+Tipo de sistema operatuvo: hvm
+Estado:         ejecutando
+CPU(s):         4
+Hora de la CPU: 41482,7s
+Memoria máxima: 5632000 KiB
+Memoria utilizada: 5632000 KiB
+Persistente:    si
+Autoinicio:     activar
+Iniciar automáticamente una vez: desactivar
+Guardar administrado: no
+Modelo de seguridad: apparmor
+DOI de seguridad: 0
+Etiqueta de seguridad: libvirt-52fb2045-086f-46df-b260-94adf40cbb27 (enforcing)
+
+
+=== Detalles de: Truenas ===
+Id:             13
+Nombre:         Truenas
+UUID:           a8ddaeed-8078-4051-b7ed-469af7792c84
+Tipo de sistema operatuvo: hvm
+Estado:         ejecutando
+CPU(s):         2
+Hora de la CPU: 14433,4s
+Memoria máxima: 2097152 KiB
+Memoria utilizada: 2097152 KiB
+Persistente:    si
+Autoinicio:     desactivar
+Iniciar automáticamente una vez: desactivar
+Guardar administrado: no
+Modelo de seguridad: apparmor
+DOI de seguridad: 0
+Etiqueta de seguridad: libvirt-a8ddaeed-8078-4051-b7ed-469af7792c84 (enforcing)
+
+=== Detalles de: TALOS05 ===
+Id:             1
+Nombre:         TALOS05
+UUID:           6a2ae31b-4858-41db-89fb-53a20eefa092
+Tipo de sistema operatuvo: hvm
+Estado:         ejecutando
+CPU(s):         4
+Hora de la CPU: 43791,2s
+Memoria máxima: 7680000 KiB
+Memoria utilizada: 7680000 KiB
+Persistente:    si
+Autoinicio:     activar
+Iniciar automáticamente una vez: desactivar
+Guardar administrado: no
+Modelo de seguridad: apparmor
+DOI de seguridad: 0
+Etiqueta de seguridad: libvirt-6a2ae31b-4858-41db-89fb-53a20eefa092 (enforcing)
+
+=== Detalles de: TALOS06 ===
+Id:             2
+Nombre:         TALOS06
+UUID:           dd30decf-0e73-45fc-bf1a-eef4c331d5d9
+Tipo de sistema operatuvo: hvm
+Estado:         ejecutando
+CPU(s):         4
+Hora de la CPU: 43363,2s
+Memoria máxima: 7680000 KiB
+Memoria utilizada: 7680000 KiB
+Persistente:    si
+Autoinicio:     activar
+Iniciar automáticamente una vez: desactivar
+Guardar administrado: no
+Modelo de seguridad: apparmor
+DOI de seguridad: 0
+Etiqueta de seguridad: libvirt-dd30decf-0e73-45fc-bf1a-eef4c331d5d9 (enforcing)
+
+=== Detalles de: TALOS07 ===
+Id:             2
+Nombre:         TALOS07
+UUID:           d90c35f6-3be5-4f72-89da-b3a6c0d9bbe8
+Tipo de sistema operatuvo: hvm
+Estado:         ejecutando
+CPU(s):         4
+Hora de la CPU: 43553,9s
+Memoria máxima: 7680000 KiB
+Memoria utilizada: 7680000 KiB
+Persistente:    si
+Autoinicio:     activar
+Iniciar automáticamente una vez: desactivar
+Guardar administrado: no
+Modelo de seguridad: apparmor
+DOI de seguridad: 0
+Etiqueta de seguridad: libvirt-d90c35f6-3be5-4f72-89da-b3a6c0d9bbe8 (enforcing)
+
+=== Detalles de: TALOS08 ===
+Id:             2
+Nombre:         TALOS08
+UUID:           ae3f5cbd-3e7c-485b-98a8-23dc406e94a9
+Tipo de sistema operatuvo: hvm
+Estado:         ejecutando
+CPU(s):         4
+Hora de la CPU: 44459,9s
+Memoria máxima: 7680000 KiB
+Memoria utilizada: 7680000 KiB
+Persistente:    si
+Autoinicio:     activar
+Iniciar automáticamente una vez: desactivar
+Guardar administrado: no
+Modelo de seguridad: apparmor
+DOI de seguridad: 0
+Etiqueta de seguridad: libvirt-ae3f5cbd-3e7c-485b-98a8-23dc406e94a9 (enforcing)
+
