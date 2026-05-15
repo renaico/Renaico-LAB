@@ -1,6 +1,6 @@
-# Implementacion del Cluster.
+# Implementacion del Cluster
 
-## Descripcion y Objetivo:
+## Descripcion y Objetivo
 
 El presente detalla el proceso de implementacion del Cluster de Talos con 8 Maquinas Virtuales, de las cuales una sera el ControlPlane del Cluster.
 
@@ -80,9 +80,9 @@ renaico@INFRMBM1:~/Escritorio/TALOS-LAB/talos-master$
 
 ## 3 Instalacion de TALOS
 
-### 3.1 Partimos con la implementacion de TALOS booteando las Maquinas virtuales.
+### 3.1 Partimos con la implementacion de TALOS booteando las Maquinas virtuales
 
-##### *nota: para no modificar la configuracion productiva de mi laboratorio inicie una nueva maquina virtual para ejemplificar los pasos que deben ser seguidos de forma logica y secuencial para activar la nueva instancia de talos*
+#### *nota: para no modificar la configuracion productiva de mi laboratorio inicie una nueva maquina virtual para ejemplificar los pasos que deben ser seguidos de forma logica y secuencial para activar la nueva instancia de talos*
 
 <figure>
   <img src="../02_imagenes/Talos_Maintenance.png" width="900" height="700" alt="Talos first boot">
@@ -96,7 +96,7 @@ renaico@INFRMBM1:~/Escritorio/TALOS-LAB/talos-master$
   <figcaption>Talos durante el proceso de configuracion de red</figcaption>
 </figure>
 
-#### 3.2.1 Ejemplo de la configuracion de red en la maquina con el rol de control plane:
+#### 3.2.1 Ejemplo de la configuracion de red en la maquina con el rol de control plane
 
 <figure>
   <img src="../02_imagenes/Talos-net-cfg.png" width="900" height="700" alt="Talos Net OK">
@@ -117,7 +117,7 @@ Esto genera:
 - `worker.yaml`
 - `talosconfig`
 
-### 3.3 Verificar tipo de disco con el cual cuenta la maquina, podria considerarse basico y buena practica.
+### 3.3 Verificar tipo de disco con el cual cuenta la maquina, podria considerarse basico y buena practica
 
 ```bash
 # Ver discos (debe aparecer vda)
@@ -125,3 +125,266 @@ talosctl get disks --insecure -n 172.16.99.101
 ```
 
 ### 3.3 Editar `controlplane.yaml`
+
+#### *Considerar revisar el tipo y nomenclatura de la tarjeta de red, la cual variara en funcion del hardware con el cual se cuente.*
+
+```yaml
+version: v1alpha1 # Indicates the schema used to decode the contents.
+debug: false # Enable verbose logging to the console.
+persist: true
+# Provides machine specific configuration options.
+machine:
+    type: controlplane # Defines the role of the machine within the cluster.
+    token: gjh82u.4asa9ngyfb5f8d6p # The `token` is used by a machine to join the PKI of the cluster.
+    # The root certificate authority of the PKI.
+    ca:
+        crt: <CERTIFICADO> #Parametros Generados de forma automatica en el paso 4.1 (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force)
+        key: <CLAVE>       #Parametros Generados de forma automatica en el paso 4.1 (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force)
+    # Extra certificate subject alternative names for the machine's certificate.
+    certSANs: []
+    time:
+        disabled: false
+        servers:
+            - ntp.shoa.cl
+            - 190.102.231.152
+    #   # Uncomment this to enable SANs.
+    #   - 10.0.0.10
+    #   - 172.16.0.10
+    #   - 192.168.0.10
+
+    # Used to provide additional options to the kubelet.
+    kubelet:
+        image: ghcr.io/siderolabs/kubelet:v1.35.2 # The `image` field is an optional reference to an alternative kubelet image.
+        defaultRuntimeSeccompProfileEnabled: true # Enable container runtime default Seccomp profile.
+        disableManifestsDirectory: true # The `disableManifestsDirectory` field configures the kubelet to get static pod manifests from the /etc/kubernetes/manifests directory.
+  
+    # Provides machine specific network configuration options.
+    network:
+        hostname: talos04
+        interfaces:
+            - interface: enp1s0
+              addresses:
+                - 172.16.99.104/24
+              routes:
+                - network: 0.0.0.0/0
+                  gateway: 172.16.99.1
+ 
+
+    # Used to provide instructions for installations.
+    install:
+        disk: /dev/vda # The disk used for installations.
+        image: ghcr.io/siderolabs/installer:v1.12.6 # Allows for supplying the image used to perform the installation.
+        wipe: false # Indicates if the installation disk should be wiped at installation time.
+        grubUseUKICmdline: true # Indicates if legacy GRUB bootloader should use kernel cmdline from the UKI instead of building it on the host.
+    
+    features:
+        diskQuotaSupport: true # Enable XFS project quota support for EPHEMERAL partition and user disks.
+        # KubePrism - local proxy/load balancer on defined port that will distribute
+        kubePrism:
+            enabled: true # Enable KubePrism support - will start local load balancing proxy.
+            port: 7445 # KubePrism port.
+        # Configures host DNS caching resolver.
+        hostDNS:
+            enabled: true # Enable host DNS caching resolver.
+            forwardKubeDNSToHost: true # Use the host DNS resolver as upstream for Kubernetes CoreDNS pods.
+    
+    # Configures the node labels for the machine.
+    nodeLabels:
+        node.kubernetes.io/exclude-from-external-load-balancers: ""
+    
+# Provides cluster specific configuration options.
+cluster:
+    id: sPkgLFyNhYVQApWOKk0vudpIYcViX3LGc15nneTQyiI= # Globally unique identifier for this cluster (base64 encoded random 32 bytes).
+    secret: 7dwu8BLDeLuMtYsAuiv2tja2XR52xslT+z7yI3eMhh8= # Shared secret of cluster (base64 encoded random 32 bytes).
+    # Provides control plane specific configuration options.
+    controlPlane:
+        endpoint: https://172.16.99.101:6443 # Endpoint is the canonical controlplane endpoint, which can be an IP address or a DNS hostname.
+    clusterName: proliant-cluster # Configures the cluster's name.
+    # Provides cluster specific network configuration options.
+    network:
+        dnsDomain: cluster.local # The domain used by Kubernetes DNS.
+        # The pod subnet CIDR.
+        podSubnets:
+            - 10.244.0.0/16
+        # The service subnet CIDR.
+        serviceSubnets:
+            - 10.96.0.0/12
+    
+        # # The CNI used.
+        # cni:
+        #     name: custom # Name of CNI to use.
+        #     # URLs containing manifests to apply for the CNI.
+        #     urls:
+        #         - https://docs.projectcalico.org/archive/v3.20/manifests/canal.yaml
+    token: oi6gog.eexsnsgqxi0ehkkg # The [bootstrap token](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) used to join the cluster.
+    secretboxEncryptionSecret: RG967zXoAdbdQ6f1Uf6iRXEAFSigyIlbjT7UOKiVUkQ= # A key used for the [encryption of secret data at rest](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/).
+    # The base64 encoded root certificate authority used by Kubernetes.
+    ca:
+        crt: <CERTIFICADO> #Parametros Generados de forma automatica en el paso 4.1 (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force)
+        key: <CLAVE>       #Parametros Generados de forma automatica en el paso 4.1 (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force)
+    # The base64 encoded aggregator certificate authority used by Kubernetes for front-proxy certificate generation.
+    aggregatorCA:
+        crt: <CERTIFICADO> #Parametros Generados de forma automatica en el paso 4.1 (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force)
+        key: <CLAVE>       #Parametros Generados de forma automatica en el paso 4.1 (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force)
+    # The base64 encoded private key for service account token generation.
+    serviceAccount:
+        key: <CLAVE> #Parametros Generados de forma automatica en el paso 4.1, user este archivo de forma referencial.  
+    # API server specific configuration options.
+    apiServer:
+        image: registry.k8s.io/kube-apiserver:v1.35.2 # The container image used in the API server manifest.
+        # Configure the API server admission plugins.
+        admissionControl:
+            - name: PodSecurity # Name is the name of the admission controller.
+              # Configuration is an embedded configuration object to be used as the plugin's
+              configuration:
+                apiVersion: pod-security.admission.config.k8s.io/v1alpha1
+                defaults:
+                    audit: restricted
+                    audit-version: latest
+                    enforce: baseline
+                    enforce-version: latest
+                    warn: restricted
+                    warn-version: latest
+                exemptions:
+                    namespaces:
+                        - kube-system
+                    runtimeClasses: []
+                    usernames: []
+                kind: PodSecurityConfiguration
+        # Configure the API server audit policy.
+        auditPolicy:
+            apiVersion: audit.k8s.io/v1
+            kind: Policy
+            rules:
+                - level: Metadata
+    
+    # Controller manager server specific configuration options.
+    controllerManager:
+        image: registry.k8s.io/kube-controller-manager:v1.35.2 # The container image used in the controller manager manifest.
+    # Kube-proxy server-specific configuration options
+    proxy:
+        image: registry.k8s.io/kube-proxy:v1.35.2 # The container image used in the kube-proxy manifest.
+    
+        # # Disable kube-proxy deployment on cluster bootstrap.
+        # disabled: false
+    # Scheduler server specific configuration options.
+    scheduler:
+        image: registry.k8s.io/kube-scheduler:v1.35.2 # The container image used in the scheduler manifest.
+    # Configures cluster member discovery.
+    discovery:
+        enabled: true # Enable the cluster membership discovery feature.
+        # Configure registries used for cluster member discovery.
+        registries:
+            # Kubernetes registry uses Kubernetes API server to discover cluster members and stores additional information
+            kubernetes:
+                disabled: true # Disable Kubernetes discovery registry.
+            # Service registry is using an external service to push and pull information about cluster members.
+            service: {}
+            # # External service endpoint.
+            # endpoint: https://discovery.talos.dev/
+    # Etcd specific configuration options.
+    etcd:
+        # The `ca` is the root certificate authority of the PKI.
+        ca:
+            crt: <CERTIFICADO> #Parametros Generados de forma automatica en el paso 4.1 (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force)
+            key: <CLAVE> #Parametros Generados de forma automatica en el paso 4.1 (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force)
+    
+        # # The container image used to create the etcd service.
+        # image: registry.k8s.io/etcd:v3.6.8
+
+        # # The `advertisedSubnets` field configures the networks to pick etcd advertised IP from.
+        # advertisedSubnets:
+        #     - 10.0.0.0/8
+    # A list of urls that point to additional manifests.
+    extraManifests: []
+    #   - https://www.example.com/manifest1.yaml
+    #   - https://www.example.com/manifest2.yaml
+
+    # A list of inline Kubernetes manifests.
+    inlineManifests: []
+    #   - name: namespace-ci # Name of the manifest.
+    #     contents: |- # Manifest contents as a string.
+    #       apiVersion: v1
+    #       kind: Namespace
+    #       metadata:
+    #        name: ci
+
+---
+#apiVersion: v1alpha1
+#kind: HostnameConfig
+#auto: stable # A method to automatically generate a hostname for the machine.
+
+# # A static hostname to set for the machine.
+# hostname: controlplane1
+# hostname: controlplane1.example.org
+```
+
+#### El archivo anterior "controlplane.yaml" se genera de forma automatica cuando se ejecuta el comando (talosctl gen config proliant-cluster https://172.16.99.101:6443 --force). La idea seria Utilizar el generado de forma automatica por talosctl, y editar los parametros de tiempo, red, direccion ip, tipo de disco e interface de red.
+
+## Guardar y validar
+
+```bash
+# Guardá el archivo (Ctrl+O, Enter, Ctrl+X)
+talosctl validate --config controlplane.yaml --mode metal
+```
+
+Debería decir: `controlplane.yaml is valid for metal mode` 
+
+## Luego aplicá la configuración al host01
+
+**Antes de ejecutar, asegurate de que el servidor ProLiant esté booteado con el USB y muestre la IP en pantalla.**
+
+```bash
+talosctl apply-config --insecure --nodes 172.16.99.101 --file controlplane.yaml
+```
+
+**Mirá la pantalla del servidor:** debe mostrar que se está instalando en `/dev/vda' 
+
+## Después del reinicio (2-3 minutos)
+
+```bash
+export TALOSCONFIG=$(pwd)/talosconfig
+talosctl config endpoints 172.16.99.101
+talosctl config nodes 172.16.99.101
+talosctl version
+talosctl bootstrap
+talosctl dashboard
+```
+
+#### Ejemplos de las salidas post Implementacion y aplicacion de bootstrap
+
+``` shell
+/Proliant Cluster$ talosctl version
+Client:
+        Tag:         v1.12.6
+        SHA:         a1b8bd61
+        Built:       
+        Go version:  go1.25.8
+        OS/Arch:     linux/amd64
+Server:
+        NODE:        172.16.99.101
+        Tag:         v1.12.7
+        SHA:         91c63991
+        Built:       
+        Go version:  go1.25.9
+        OS/Arch:     linux/amd64
+        Enabled:     RBAC 
+
+┐ talos01 (v1.12.7): uptime 97h19m54s, 2x3.09GHz, 16 GiB RAM, PROCS 30, CPU 6.8%, RAM 5.1%                                                                                       
+                                                                                                                                                                                 
+ UUID       3c3eb3b8-1c2a-4812-9928-2cf83973705d                   TYPE               controlplane             HOST         talos01                                              
+ CLUSTER    proliant-cluster (8 machines)                          KUBERNETES         v1.35.2                  IP           172.16.99.101/24                                     
+ SIDEROLINK n/a                                                    KUBELET            √ Healthy                GW           172.16.99.1, 172.16.99.1                             
+ STAGE      √ Running                                              APISERVER          √ Healthy                CONNECTIVITY √ OK                                                 
+ READY      √ True                                                 CONTROLLER-MANAGER √ Healthy                DNS          208.67.220.220, 208.67.222.222                       
+ SECUREBOOT × False                                                SCHEDULER          √ Healthy                NTP          ntp.shoa.cl, 190.102.231.152                         
+── Logs ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ user: warning: [2026-05-11T19:36:09.658558031Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":            
+ "registry.k8s.io/etcd@sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                                 
+ user: warning: [2026-05-11T19:36:09.683219969Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":            
+ "sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                                                      
+ user: warning: [2026-05-15T19:24:16.538148709Z]: [talos] bootstrap request received                                                                                             
+                                                                                                                                                                                 
+[172.16.99.101] --- [Summary] --- [F2: Monitor]─
+
+```
