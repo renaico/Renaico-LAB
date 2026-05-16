@@ -179,7 +179,9 @@ talosctl apply-config --insecure --nodes 172.16.99.101 --file controlplane.yaml
 
 **Mirá la pantalla del servidor:** debe mostrar que se está instalando en `/dev/vda'
 
-## 4.6 Después del reinicio (2-3 minutos)
+## 4.6 Configurar contexto post-instalación
+
+### Después del reinicio (2-3 minutos)
 
 ```bash
 export TALOSCONFIG=$(pwd)/talosconfig
@@ -197,33 +199,33 @@ talosctl dashboard
 Client:
         Tag:         v1.12.6
         SHA:         a1b8bd61
-        Built:     
+        Built:   
         Go version:  go1.25.8
         OS/Arch:     linux/amd64
 Server:
         NODE:        172.16.99.101
         Tag:         v1.12.7
         SHA:         91c63991
-        Built:     
+        Built:   
         Go version:  go1.25.9
         OS/Arch:     linux/amd64
         Enabled:     RBAC 
 
-┐ talos01 (v1.12.7): uptime 97h19m54s, 2x3.09GHz, 16 GiB RAM, PROCS 30, CPU 6.8%, RAM 5.1%                                                                                     
-                                                                                                                                                                               
- UUID       3c3eb3b8-1c2a-4812-9928-2cf83973705d                   TYPE               controlplane             HOST         talos01                                            
- CLUSTER    proliant-cluster (8 machines)                          KUBERNETES         v1.35.2                  IP           172.16.99.101/24                                   
- SIDEROLINK n/a                                                    KUBELET            √ Healthy                GW           172.16.99.1, 172.16.99.1                           
- STAGE      √ Running                                              APISERVER          √ Healthy                CONNECTIVITY √ OK                                               
- READY      √ True                                                 CONTROLLER-MANAGER √ Healthy                DNS          208.67.220.220, 208.67.222.222                     
- SECUREBOOT × False                                                SCHEDULER          √ Healthy                NTP          ntp.shoa.cl, 190.102.231.152                       
+┐ talos01 (v1.12.7): uptime 97h19m54s, 2x3.09GHz, 16 GiB RAM, PROCS 30, CPU 6.8%, RAM 5.1%                                                                                   
+                                                                                                                                                                             
+ UUID       3c3eb3b8-1c2a-4812-9928-2cf83973705d                   TYPE               controlplane             HOST         talos01                                          
+ CLUSTER    proliant-cluster (8 machines)                          KUBERNETES         v1.35.2                  IP           172.16.99.101/24                                 
+ SIDEROLINK n/a                                                    KUBELET            √ Healthy                GW           172.16.99.1, 172.16.99.1                         
+ STAGE      √ Running                                              APISERVER          √ Healthy                CONNECTIVITY √ OK                                             
+ READY      √ True                                                 CONTROLLER-MANAGER √ Healthy                DNS          208.67.220.220, 208.67.222.222                   
+ SECUREBOOT × False                                                SCHEDULER          √ Healthy                NTP          ntp.shoa.cl, 190.102.231.152                     
 ── Logs ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
- user: warning: [2026-05-11T19:36:09.658558031Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":          
- "registry.k8s.io/etcd@sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                               
- user: warning: [2026-05-11T19:36:09.683219969Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":          
- "sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                                                    
- user: warning: [2026-05-15T19:24:16.538148709Z]: [talos] bootstrap request received                                                                                           
-                                                                                                                                                                               
+ user: warning: [2026-05-11T19:36:09.658558031Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":        
+ "registry.k8s.io/etcd@sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                             
+ user: warning: [2026-05-11T19:36:09.683219969Z]: [talos] deleted an image {"component": "controller-runtime", "controller": "runtime.CRIImageGCController", "image":        
+ "sha256:397189418d1a00e500c0605ad18d1baf3b541a1004d768448c367e48071622e5"}                                                                                                  
+ user: warning: [2026-05-15T19:24:16.538148709Z]: [talos] bootstrap request received                                                                                         
+                                                                                                                                                                             
 [172.16.99.101] --- [Summary] --- [F2: Monitor]─
 
 ```
@@ -256,9 +258,180 @@ talosctl bootstrap
 talosctl dashboard
 
 ```
-#### 6 Maquina Virtual Talos01 (ControlPlane) Operativa. 
+
+#### 6 Maquina Virtual Talos01 (ControlPlane) Operativa.
 
 <figure>
   <img src="../02_imagenes/Talos-Master-ok.png" width="900" height="700" alt="Talos Net OK">
   <figcaption>Talos01 Operativa Como ControlPlane del Cluster</figcaption>
 </figure>
+
+## 7 Generar kubeconfig
+
+```bash
+talosctl kubeconfig .
+export KUBECONFIG=$(pwd)/kubeconfig
+```
+
+### 7.1 Verificar Kubernetes
+
+```bash
+kubectl get nodes
+kubectl get pods -n kube-system
+```
+
+## II Implementacion de los workers
+
+### 1 Edicion basse del archivo .yaml del worker
+
+#### Estructura base del worker
+
+```yaml
+version: v1alpha1
+machine:
+    type: worker
+    token: <TOKEN_DEL_CLUSTER>
+    ca:
+        crt: <CERTIFICADO>
+        key: <CLAVE>
+    time:
+        disabled: false
+        servers:
+            - ntp.shoa.cl
+            - 190.102.231.152
+    network:
+        hostname: talos02
+        interfaces:
+            - interface: enp1s0    #  o eno1, variara deacuerdo al tipo de Maquina/server
+              addresses:
+                - 172.16.99.102/24
+              routes:
+                - network: 0.0.0.0/0
+                  gateway: 172.16.99.1
+    install:
+        disk: /dev/vda
+    features:
+        rbac: true
+cluster:
+    controlPlane:
+        endpoint: https://172.16.99.101:6443
+    clusterName: proliant-cluster
+```
+
+### 1.2 Crear archivos por nodo
+
+```bash
+# Crear copias para cada worker
+cp worker.yaml worker02.yaml
+cp worker.yaml worker03.yaml
+# ... hasta worker08.yaml
+
+# Editar cada uno con su hostname e IP
+nano worker02.yaml   # hostname: talos02, IP: 172.16.99.102
+nano worker03.yaml   # hostname: talos03, IP: 172.16.99.103
+# ... etc.
+```
+
+---
+
+## 2. Agregar Nodos Workers al Cluster
+
+### 2.1 Proceso para cada worker
+
+```bash
+# 1. Bootear el nodo desde ISO de Talos
+# 2. Esperar modo mantenimiento con su IP
+
+# 3. Aplicar configuración (ejemplo para talos02)
+talosctl apply-config --insecure -n 172.16.99.102 --file worker02.yaml
+
+# 4. En consola del worker, verificar instalación
+#    Debe aparecer: "installation complete, rebooting"
+
+# 5. Después del reinicio, verificar desde el master
+kubectl get nodes -w
+```
+
+### 6.2 Verificar workers en el clúster
+
+```bash
+# Ver todos los nodos
+kubectl get nodes -o wide
+
+# Ver detalles de un worker específico
+kubectl describe node talos02
+
+# Ver estado de servicios en el worker
+talosctl services -n 172.16.99.102
+talosctl dashboard -n 172.16.99.102
+```
+
+### 6.3 Tabla de Workers
+
+| Nodo     | Archivo YAML  | IP            | Hostname |
+| -------- | ------------- | ------------- | -------- |
+| Worker 1 | worker02.yaml | 172.16.99.102 | talos02  |
+| Worker 2 | worker03.yaml | 172.16.99.103 | talos03  |
+| Worker 3 | worker04.yaml | 172.16.99.104 | talos04  |
+| Worker 4 | worker05.yaml | 172.16.99.105 | talos05  |
+| Worker 5 | worker06.yaml | 172.16.99.106 | talos06  |
+| Worker 6 | worker07.yaml | 172.16.99.107 | talos07  |
+| Worker 7 | worker08.yaml | 172.16.99.108 | talos08  |
+
+---
+
+## 9. Checklist Final de Verificación
+
+### Master Node (talos01)
+
+```bash
+talosctl version                    # Server visible
+talosctl dashboard                  # STAGE: Running, READY: True
+kubectl get nodes                   # talos01 Ready
+kubectl get pods -n kube-system     # Todos Running
+```
+
+### Workers (talos02 - talos08)
+
+```bash
+kubectl get nodes                   # Todos los nodos Ready
+talosctl services -n 172.16.99.102  # Servicios Running
+```
+
+### Red y Conectividad
+
+```bash
+# Desde Debian
+ping 172.16.99.101
+nc -zv 172.16.99.101 50000
+
+# Desde dentro del clúster (crear pod de prueba)
+kubectl run test --image=alpine --rm -it --restart=Never -- ping 172.16.99.101
+```
+
+### Persistencia de Configuración
+
+```bash
+# Guardar configuraciones
+cp talosconfig ~/.talos/config
+cp kubeconfig ~/.kube/config-talos
+
+# Probar que funcionan después de reiniciar terminal
+export TALOSCONFIG=~/.talos/config
+export KUBECONFIG=~/.kube/config-talos
+talosctl version
+kubectl get nodes
+```
+
+---
+
+## 📌 Notas Finales
+
+1. **Siempre validar YAML** antes de aplicar: `talosctl validate --config archivo.yaml --mode metal`
+2. **Modo mantenimiento vs. modo normal:** Usar `--insecure` SOLO cuando el nodo está en modo mantenimiento (recién booteado desde ISO)
+3. **Persistencia:** Los archivos `talosconfig` y `kubeconfig` son la llave de tu clúster. Guárdalos de forma segura.
+4. **Actualizaciones:** Talos puede actualizarse sin downtime usando `talosctl upgrade`
+
+---
+
+**Documentación oficial:** https://www.talos.dev/v1.12/introduction/what-is-talos/
