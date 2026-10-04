@@ -357,10 +357,10 @@ kubectl uncordon talos02
 | **Nodo Talos sin Internet**                | Error`TLS handshake timeout` al hacer upgrade.   | Verificar y parchear el gateway y DNS en la`machineconfig`.                                                              |
 | **DNS Interno Incorrecto**                 | `/etc/resolv.conf` apunta a `127.0.0.53`.      | Parchear`machineconfig` para forzar `resolvConf.override: true` y añadir nameservers.                                 |
 | **API Key de TrueNAS Inválida**           | `401 Unauthorized / Invalid API key`.            | Generar una nueva API key desde`Settings` con permisos de administrador y copiarla sin errores.                          |
-| **`datasetParentName` Incorrecto**       | Error`"Please specify a pool which exists..."`.  | Asegurar que el dataset padre (`DATAPOOL/k8s-portal`) existe en TrueNAS.                                                 |
+| **`datasetParentName` Incorrecto**       | Error`"Please specify a pool which exists..."`.  | Asegurar que el dataset padre (`DATAPOOL/DATA`) existe en TrueNAS.                                                 |
 | **Error `targetGroups is not iterable`** | Pods del CSI en`CrashLoopBackOff`.               | La configuración de iSCSI es compleja. Se recomienda usar NFS.                                                            |
-| **Share NFS no accesible**                 | Pods en`ContainerCreating` o errores de montaje. | Verificar que el share NFS en TrueNAS tenga la opción**`All dirs`** habilitada.                                         |
-| **Provisioner no inicia**                  | Pods en`CrashLoopBackOff`.                       | Verificar que el servidor NFS (`172.16.99.234`) sea accesible y que el path (`/mnt/DATAPOOL/k8s-portal`) sea correcto. |
+| **Share NFS no accesible**                 | Pods en`ContainerCreating` o errores de montaje. | Verificar que el share NFS en TrueNAS tenga la opción**`All dirs`** habilitada; Verificar que los permisos sean los adecuados en el dataset (root:wheel).                                         |
+| **Provisioner no inicia**                  | Pods en`CrashLoopBackOff`.                       | Verificar que el servidor NFS (`172.16.99.233`) sea accesible y que el path (`/mnt/DATAPOOL/k8s-portal`) sea correcto. |
 
 ---
 
