@@ -198,3 +198,50 @@ kubectl get events --all-namespaces | grep talosXX
 | Nodos listos | `kubectl get nodes` |
 | Pods del sistema | `kubectl get pods -n kube-system` |
 | Dashboard Talos | `talosctl dashboard` |
+
+
+Para ver todos los pods de todos los namespaces, usa:
+
+```bash
+# Ver todos los pods en todos los namespaces
+kubectl get pods --all-namespaces
+
+# O la versión corta
+kubectl get pods -A
+```
+
+## Comandos útiles relacionados:
+
+```bash
+# Ver pods con más detalles (incluyendo nodo donde corren)
+kubectl get pods -A -o wide
+
+# Ver solo pods de un namespace específico
+kubectl get pods -n <namespace>
+
+# Ver pods con etiquetas específicas en todos los namespaces
+kubectl get pods -A --show-labels
+
+# Ver pods ordenados por nodo
+kubectl get pods -A -o wide --sort-by=.spec.nodeName
+
+# Ver solo pods en estado Running o Error
+kubectl get pods -A --field-selector=status.phase=Running
+kubectl get pods -A --field-selector=status.phase=Failed
+
+# Ver pods con su IP y nodo (formato tabla ancha)
+kubectl get pods -A -o=custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name,NODE:.spec.nodeName,IP:.status.podIP,STATUS:.status.phase
+```
+
+## Para encontrar tus pods Windows específicamente:
+
+```bash
+# Buscar pods que tengan "windows" en el nombre
+kubectl get pods -A | grep -i windows
+
+# Buscar por label (si tienen alguna label específica)
+kubectl get pods -A -l app=windows-server
+
+# Ver detalles de todos los pods con su imagen
+kubectl get pods -A -o jsonpath='{range .items[*]}{.metadata.namespace}{"\t"}{.metadata.name}{"\t"}{.spec.containers[*].image}{"\n"}{end}'
+```
