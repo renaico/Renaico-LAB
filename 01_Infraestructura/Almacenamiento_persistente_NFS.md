@@ -222,6 +222,56 @@ talosctl -n 172.16.99.101 get extensions
 </figure>
 ---
 
+#### Pruebas de Verificacion, implementar Pod de Puebas
+
+```bash
+# PASO 1: Reinstalar provisioner
+helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+helm repo update
+helm install nfs-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+  --namespace nfs-provisioner --create-namespace \
+  --set nfs.server=172.16.99.233 \
+  --set nfs.path=/mnt/DATAPOOL/DATA \
+  --set storageClass.name=truenas-nfs \
+  --set storageClass.defaultClass=true
+
+# PASO 2: Verificar
+kubectl get pods -n nfs-provisioner
+kubectl get storageclass
+kubectl describe pod -n nfs-provisioner -l app=nfs-subdir-external-provisioner
+
+# PASO 3: Probar con PVC nuevo
+kubectl apply -f - << 'EOF'
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-nfs-verificacion
+  namespace: default
+spec:
+  accessModes: [ReadWriteMany]
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: truenas-nfs
+EOF
+
+kubectl get pvc test-nfs-verificacion -n default -w
+# Debe pasar a Bound en POCOS segundos
+
+# PASO 4: Limpiar prueba
+# Eliminar el PVC de prueba
+kubectl delete pvc test-nfs-verificacion -n default
+
+# Verificar que se eliminó y que el PV también se limpió
+kubectl get pvc -A
+kubectl get pv
+
+# PASO 5: Eliminar PVC viejo (opcional, si no tiene datos)
+# kubectl delete pvc test-pvc -n default
+```
+
+---
+
 ## 4. Fase 3: Instalación y Configuración del Provisioner NFS
 
 *Decisión Clave:* Después de múltiples intentos fallidos con `democratic-csi` (iSCSI y NFS), se decidió usar la solución más simple y robusta: **`nfs-subdir-external-provisioner`**.
