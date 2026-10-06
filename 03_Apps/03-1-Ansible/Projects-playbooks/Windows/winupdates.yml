@@ -1,0 +1,32 @@
+---
+- name: Instalacion de Parches de Seguridad
+  hosts: windows_vms
+  gather_facts: false
+
+  tasks:
+    - name: Buscar e instalar actualizaciones criticas y de seguridad
+      ansible.windows.win_updates:
+        category_names:
+          - SecurityUpdates
+          - CriticalUpdates
+        state: installed
+      register: update_result
+
+    - name: Mostrar reporte de parches instalados
+      ansible.builtin.debug:
+        var: update_result
+
+    - name: Buscar e instalar actualizaciones criticas, de seguridad y definiciones
+      ansible.windows.win_updates:
+        category_names:
+          - SecurityUpdates
+          - CriticalUpdates
+          - DefinitionUpdates
+        state: installed
+      register: update_result
+
+    - name: Buscar e instalar cualquier actualizacion disponible
+      ansible.windows.win_updates:
+        category_names: '*'
+        state: installed
+      register: update_result

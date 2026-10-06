@@ -1,0 +1,5 @@
+poner aqui como hice para distribuir la clave 
+
+y poner aqui que playbooks y como se ejecutan
+
+como se hace el inventario y la configuracion

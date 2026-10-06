@@ -1,0 +1,22 @@
+---
+- name: Prueba de gestion de usuarios en Windows
+  hosts: windows_vms
+  gather_facts: false
+
+  tasks:
+    - name: Crear o asegurar usuario de pruebas 'soporte_tech'
+      ansible.windows.win_user:
+        name: "soporte_tech"
+        password: "PasswordSegura123!"
+        groups:
+          - Administradores
+        state: present
+        password_never_expires: true
+
+    - name: Cambiar el usuario 'soporte_tech' a Usuario Estándar (Quitar de Administradores)
+      ansible.windows.win_user:
+        name: "soporte_tech"
+        groups:
+          - Usuarios
+        groups_action: replace # Reemplaza todos los grupos previos
+        state: present
