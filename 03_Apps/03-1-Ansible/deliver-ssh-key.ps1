@@ -1,31 +1,38 @@
 ##Este Script esta pensado para deplegar la clave ssh creada en el nodo de control de Ansible 
 
-# 1. Definir la clave pública de Ansible
-$sshKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCuwlukLBrDPt2GseZlcnWOMuvxy05hgv9d14lGZPBKil3vtLrXlSR5T/ObdMrP1b7SUMVq/OkFM2Q2Jah0WGCHiLDt4XIRBucyAbootp4rxsUxVRtlc2C50Oe1O5Rd8VM7Eu5qJYbO95M7TZqTi3DjwfokaU/DdK3sjyBZoX3KwFCP2G4HUIKl8kUW5YppcPWARNF9B4kkc8vJ8i4vZpUfeSHm0THWTiAT5iYnSOg58fvS7Wx8+sHbiDu+4SXKhJmyLx8iU5XVqMPCpfk0DXknPahiVX7DowoBuuCv7QFOFnLqaT9IR/6oyptzM5ZhoBvIOEfsGYqAA72yvE3h6p+My7pnUqu4sp27ewvPSYaPUByOBQB/2/fWEmMLn5VLAN2AMXH8ltO3dsTdrt2/i/Mc+Bn9p0ydcv5mDLpU4gVAuIdXJvu5EjPU3AdSqulv3CXAzJ9N6h5h0AZTI6b61pu3marKROfh1Pen3j1GdOjNvs98XSkqqorI6aOQmfjsHB81XuHWhB6mwX36t9CHWl/OfMoGC00FuBJJu2N1DzTaHxvtypda9W5JOOahGXtUYWGP6MnicequckfA89oMJSYLMEl9w7ZPmevG5Zu0Q/gg5VCrA6KjJPAK4QVczFX/NTdKTaj9e4vhBmbJgUT3X6nNmgl6/bOymYKzi1XUdEMz8w== root@ansible-runner-c464bd8-4s8q7"
+# 1. Definir la clave pública exacta de tu Pod de Ansible
+$sshKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDdWaOUzF0RqCNEo5fjPvj+QLaDEus29twzUWVjTSFS7Ija67vMh1C4rq3c6xLfi8miWeUZ4+92F6ffWsbTc2uAiCHuIlYp+VGTYoDLbKP3VHeFPhcemKsQYq8tFSxbhhsygRzWFDMmx0xQ5A9zN6dERxX/AATboaBOmAeVjO41tCw4WNVLt+SBTG6gBhWw/4itIylmXc9ZNA/d9+9Vkq60NFqe3JOAF0k55LgLEldGFDjKuRj8td4vgityAjKPyMWUqR2Els3KHpzZsPzi8Dj5NDlGeL2CUmxAADdTlDebMVVUGf2nOH+M9rQI8y14uW9Gto8h9K/nhHBK7343FS9AZMfsj2SuNmpfLmpTIY3TWeRt/G4S83KwKwU/es7UK/RSO3N/GfvbWBaUnH1+ANELc771OFoysnZeIz9t9C85GuxiBlZr3O5H4QH7o18jR8aKww04eoHpHnUULYTj/Kb2ZMj8DgGPul66fky/3o3WYDcGW7BGaIKxDU0kncznYpwUmvuAvmp4RVE6VWCGQ8xxQZxdVS+cnAGsZZpsNS4vSwLlLG9+dAKB4z1lb9gUXCGfWZ+hKkFPhYAtvELjJtz9rqIJ4ygzhK2DRxCUZVqeWv1SLIh0swjSzXXBXOpn1ipb9hhe2cNaMcWsa0gLzwerSmuFux6TEoJn8gLY62NbAQ== ansible@ansible-runner-7b9d5588fb-2n8cv"
 
-# 2. Asegurar la instalación y arranque del servicio OpenSSH Server
+# 2. Habilitar la cuenta Administrador y asignar la contraseña por defecto
+Get-LocalUser -Name "Administrador" | Enable-LocalUser
+Set-LocalUser -Name "Administrador" -Password (ConvertTo-SecureString "pa.le69," -AsPlainText -Force)
+
+# 3. Asegurar la instalación y arranque del servicio OpenSSH Server
 if (-not (Get-Service sshd -ErrorAction SilentlyContinue)) {
     Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 }
 Set-Service -Name sshd -StartupType Automatic
 Start-Service sshd
 
-# 3. Configurar la clave pública global para Administradores
+# 4. Configurar el archivo autorizado global para la cuenta Administrador
 $sshDir = "C:\ProgramData\ssh"
 if (!(Test-Path $sshDir)) { New-Item -ItemType Directory -Path $sshDir -Force }
 
 $adminFile = "$sshDir\administrators_authorized_keys"
 Set-Content -Path $adminFile -Value $sshKey -Encoding UTF8
 
-# 4. Aplicar Permisos (ACLs) estrictos requeridos por OpenSSH
+# 5. Aplicar Permisos (ACLs) requeridos por OpenSSH en Windows
 icacls $adminFile /inheritance:r
 icacls $adminFile /grant "NT AUTHORITY\SYSTEM:(F)"
-icacls $adminFile /grant "BUILTIN\Administrators:(F)"
+icacls $adminFile /grant "BUILTIN\Administradores:(F)"
 
-# 5. Regla de Firewall para SSH (en el puerto 22 o el que definas)
+# 6. Habilitar la regla del Firewall de Windows para el puerto SSH (22)
 if (-not (Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue)) {
     New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 }
 
-# 6. Reiniciar el servicio SSH para aplicar los cambios
+# 7. stablecer la Shell por defecto de OpenSSH a PowerShell para que Ansible pueda ejecutar los playbooks correctamente. 
+New-ItemProperty -Path 'HKLM:\SOFTWARE\OpenSSH' -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
+
+# 8. Reiniciar el servicio sshd para aplicar los cambios
 Restart-Service sshd

@@ -30,6 +30,7 @@ spec:
 ```
 
 ### Paso 3: Crear deployment de ansible runner
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -110,7 +111,7 @@ spec:
 
           echo "=== Configurando claves SSH ==="
           mkdir -p /home/ansible/.ssh
-          
+      
           cat > /home/ansible/.ssh/authorized_keys << 'KEY'
           ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDTxty2xndH7/w62LuLfoeJ4UKx+nHZWvAzCWjeU8+ZCfRHZf+1ncWKwfwiG/su2O2sVn1LYv7NX2NI5RGEADorWIT36MB1sTo8w3twIA9VENWYBQirk9rsMTwhD4ANsVFdRjEuRxS2RvPT5ZJ/CqkdSOAZ0nFyAF6fpwWa80wKaoBXVC3tgtUZWMkBsYW4jgQvfFT4cRiMEfgrpEUxfkFQbACvRUNuOQ3H30/XUK7hWaRTp8LkC05Z4ljw75VTWP9pVeurLxnmJXEHxlJmenWZ6kj1gz6LPkECwR7v/25PRf2//ec5wVqOLeBKcxM296aLAkl4b9inlhGq+q2j0VogHgcd15ToHnX+2q8IljSwSxtQR0bgTOQLTEYUE5Qf67hpLvDA0FZ0cC28q3B18dxu4lGCXgX0amMZDPRMk5YFTWjvvYYkLU1OERSwQ+pm9NF0nSA8oOiMIutkuLSyjb4h66Yoy2baL+F7nfFvlH6d0OQ7n+9z0GObi1DT+JnDFGsMFtozI3LAzKsD4wymOhVhYRDXYS/9a3m3U4aKxPiORHt9TAtzXlfCDqIVEQeWdNvL8GvOkpCTO1HvrVlOLdemdcQgUN0tyvNmuID4lIxt2KQnIleD+8XdewYBPu/c0Tq5CeySN976OsUXpujBuMxeMEMt4/QXy7OXAdm+2ERDkQ== renaico@INFRMBM1
           KEY
@@ -205,7 +206,8 @@ kubectl logs -n ansible -f deployment/ansible-runner
 # 6. Probar conexión SSH
 ssh -p 31022 ansible@172.16.99.101
 # Password: ansible123
-``` 
+```
+
 ---
 
 #### Ajustes Clave Realizados:
